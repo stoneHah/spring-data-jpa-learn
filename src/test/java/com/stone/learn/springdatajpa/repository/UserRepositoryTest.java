@@ -5,6 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -24,7 +27,7 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    public void testAddUser(){
+    public void testUserRepository(){
         User user = new User("aa@stone.com","Jane","Slav");
         userRepository.save(user);
 
@@ -33,6 +36,48 @@ public class UserRepositoryTest {
 
         user = new User("bbac@stone.com","Jone","Yueh");
         userRepository.save(user);
+
+        user = new User("sss@stone.com","SSS","Chen");
+        userRepository.save(user);
+
+        System.out.println("User found with findAll():");
+        System.out.println("-------------------------------");
+
+        for (User u : userRepository.findAll()) {
+            System.out.println(u.toString());
+        }
+
+        System.out.println("List User lastNames:");
+        System.out.println("-------------------------------");
+
+        for (String lastName : userRepository.findLastNames()) {
+            System.out.println(lastName);
+        }
+
+
+        System.out.println("List User Pageable By Jpql:");
+        System.out.println("-------------------------------");
+
+        Pageable page = PageRequest.of(0, 2, Sort.by(new Sort.Order(Sort.Direction.DESC,"lastName")));
+        for (User u : userRepository.findByUserPageableJpql(page)) {
+            System.out.println(u);
+        }
+
+        System.out.println("List User Pageable By native sql:");
+        System.out.println("-------------------------------");
+        page = PageRequest.of(0, 2, Sort.by(new Sort.Order(Sort.Direction.DESC,"last_name")));
+        for (User u : userRepository.findByUserPageableNative(page)) {
+            System.out.println(u);
+        }
+
+        /*System.out.println("List User Sort By native sql:");
+        System.out.println("-------------------------------");
+
+        for (User u : userRepository.findByUserSortNative("last_name")) {
+            System.out.println(u);
+        }*/
+
+
     }
 
     @Test
